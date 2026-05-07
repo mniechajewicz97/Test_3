@@ -178,9 +178,6 @@ public class StringContainer {
     }
 
     public void remove(String value) {
-        if (!pattern.matcher(value).matches()) {
-            throw new org.example.InvalidStringContainerValueException(value);
-        }
 
         if (firstElement == null) {
             return;

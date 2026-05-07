@@ -1,7 +1,6 @@
 package org.example.service;
 
-import lombok.AllArgsConstructor;
-import lombok.ToString;
+
 import org.example.model.Appointment;
 import org.example.model.Doctor;
 import org.example.model.Patient;
@@ -11,13 +10,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@ToString
+
 
 public class Service {
     private final List<Doctor> doctors;
     private final List<Patient> patients;
     private final List<Appointment> appointments;
+
+    public Service(List<Doctor> doctors, List<Patient> patients, List<Appointment> appointments) {
+        this.doctors = doctors;
+        this.patients = patients;
+        this.appointments = appointments;
+    }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "doctors=" + doctors +
+                ", patients=" + patients +
+                ", appointments=" + appointments +
+                '}';
+    }
 
     public Map<Long, Doctor> doctorsData() {
         return doctors.stream()
@@ -41,23 +54,20 @@ public class Service {
 
     }
 
-    public Doctor findDoctorWithMostAppointments() {
+    public List<Doctor> findDoctorWithMostAppointments() {
         Map<Long, Long> visitsByDoctor = countAppointmentsByDoctor();
-
-        Map.Entry<Long, Long> maxEntry = visitsByDoctor.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
+        Long maxAppointments = visitsByDoctor.values().stream()
+                .max(Long::compareTo)
                 .orElseThrow(() -> new IllegalStateException("Cannot find doctor with most appointments because appointments list is empty"));
 
-        Long doctorId = maxEntry.getKey();
-        Doctor doctor = doctorsData().get(doctorId);
+        Map<Long, Doctor> doctorsById = doctorsData();
 
-        if (doctor == null) {
-            throw new IllegalStateException(
-                    "Cannot find doctor with most appointments because doctor ID " + doctorId + " does not exist"
-            );
-        }
 
-        return doctor;
+        return visitsByDoctor.entrySet().stream()
+                .filter(entry-> entry.getValue().equals(maxAppointments))
+                .map(entry-> doctorsById.get(entry.getKey()))
+                .filter(doctor -> doctor != null)
+                .collect(Collectors.toList());
     }
 
     public Map<Long, Long> countAppointmentsByPatient() {
@@ -65,36 +75,38 @@ public class Service {
                 .collect(Collectors.groupingBy(Appointment::getPatientId, Collectors.counting()));
     }
 
-    public Patient findPatientWithMostAppointments() {
+    public List<Patient> findPatientWithMostAppointments() {
         Map<Long, Long> visitsByPatient = countAppointmentsByPatient();
-
-        Map.Entry<Long, Long> maxEntry = visitsByPatient.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
+        Long maxAppointmentPatient = visitsByPatient.values().stream()
+                .max(Long::compareTo)
                 .orElseThrow(() -> new IllegalStateException("Cannot find patient with most appointments because appointments list is empty"));
-        Long patientId = maxEntry.getKey();
-        Patient patient = patientsData().get(patientId);
 
-        if (patient == null) {
-            throw new IllegalStateException(
-                    "Cannot find patient with most appointments because patient ID " + patientId + " does not exist"
-            );
-        }
-        return patientsData().get(patientId);
+        Map<Long, Patient> patientsById = patientsData();
+
+
+        return visitsByPatient.entrySet().stream()
+                .filter(entry-> entry.getValue().equals(maxAppointmentPatient))
+                .map(entry-> patientsById.get(entry.getKey()))
+                .filter(patient -> patient != null)
+                .collect(Collectors.toList());
     }
 
-    public String findMostPopularSpecialty() {
+    public List<String> findMostPopularSpecialty() {
         Map<Long, Doctor> doctorsById = doctorsData();
 
         Map<String, Long> appointmentsBySpeciality = appointments.stream()
                 .map(a->doctorsById.get(a.getDoctorId()))
                 .filter(doctor -> doctor != null)
-                .collect(Collectors.groupingBy(a -> doctorsById.get(a.getDoctorId()).getSpecialty(), Collectors.counting()));
+                .collect(Collectors.groupingBy(Doctor::getSpecialty, Collectors.counting()));
 
-        Map.Entry<String, Long> maxEntry = appointmentsBySpeciality.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
+        Long max = appointmentsBySpeciality.values().stream()
+                .max(Long::compareTo)
                 .orElseThrow(()-> new IllegalStateException("Cannot find most popular specialty because appointments list is empty"));
 
-        return maxEntry.getKey();
+        return appointmentsBySpeciality.entrySet().stream()
+                .filter(entry-> entry.getValue().equals(max))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
 
     }
 
