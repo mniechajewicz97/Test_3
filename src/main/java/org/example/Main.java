@@ -22,25 +22,25 @@ public class Main {
         Service service = new Service(doctors, patients, appointments);
 
         System.out.println("1: znajdź lekarza ktory miał najwięcej wizyt");
-        System.out.println(service.findDoctorWithMostAppointments());
+        service.findDoctorWithMostAppointments().forEach(System.out::println);
 
         System.out.println("2: znajdź pacjenta który miał najwięcej wizyt");
-        System.out.println(service.findPatientWithMostAppointments());
+        service.findPatientWithMostAppointments().forEach(System.out::println);
 
-        System.out.println("3: która specalizacja cieszy się największym powodzeniem?");
-        System.out.println(service.findMostPopularSpecialty());
+        System.out.println("3: która specjalizacja cieszy się największym powodzeniem?");
+        service.findMostPopularSpecialty().forEach(System.out::println);
 
         System.out.println("4: którego roku było najwięcej wizyt?");
         System.out.println(service.findYearWithMostAppointments());
 
         System.out.println("5: wypisz top 5 najstarszych lekarzy");
-        System.out.println(service.theOldestDoctors());
+        service.theOldestDoctors().forEach(System.out::println);
 
         System.out.println("6: zwroc pacientow ktorzy byli u minumum 5ciu roznych lekarzy");
-        System.out.println(service.findPatientsVisitedByAtLeast5Doctors());
+        service.findPatientsVisitedByAtLeast5Doctors().forEach(System.out::println);
 
         System.out.println("7: zwroc lekarzy exclusive - czyli takich ktorzy przyjmowali tylko jednego pacjenta");
-        System.out.println(service.findExclusiveDoctors());
+        service.findExclusiveDoctors().forEach(System.out::println);
 
 
         System.out.println("Zadanie 2\n");

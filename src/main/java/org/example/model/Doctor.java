@@ -36,7 +36,7 @@ public class Doctor {
 
     @Override
     public String toString() {
-        return "(ID:" + doctorId + ") Doctor "  + firstName + " " + lastName + ", speciality: " + specialty;
+        return "Doctor "  + firstName + " " + lastName + ", speciality: " + specialty;
 
     }
 }

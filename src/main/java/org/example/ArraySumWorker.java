@@ -1,8 +1,5 @@
 package org.example;
 
-import lombok.Getter;
-
-@Getter
 public class ArraySumWorker implements Runnable {
     private int[] array;
     private int startIndex;
@@ -13,6 +10,10 @@ public class ArraySumWorker implements Runnable {
         this.array = array;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
+    }
+
+    public long getPartialSum() {
+        return partialSum;
     }
 
     @Override
